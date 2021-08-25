@@ -44,10 +44,18 @@ module Puma
         [http_code, type, [content]]
       end
 
-      def include_usage(stats)
-        stats['usage'] = (1 - stats['pool_capacity'].to_f / stats['max_threads']).round(2)
+      def include_stats_hook(stats)
+        if hook = @launcher.options[:kubernetes_stats_hook]
+          hook.call(stats)
+        end
         stats
       end
+
+      def include_usage(stats)
+        stats['usage'] = (1 - stats['pool_capacity'].to_f / stats['max_threads']).round(2)
+        include_stats_hook(stats)
+      end
+
       def include_puma_key_prefix(stats)
         result = {}
         stats.each do |k,v|
