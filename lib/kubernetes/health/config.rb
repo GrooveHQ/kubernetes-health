@@ -5,13 +5,14 @@ module Kubernetes
       @@ready_if = lambda { true }
       @@enable_lock_on_migrate = [true, 'true'].include? ENV['KUBERNETES_HEALTH_ENABLE_LOCK_ON_MIGRATE']
       @@enable_rack_on_migrate = [true, 'true'].include? ENV['KUBERNETES_HEALTH_ENABLE_RACK_ON_MIGRATE']
-      @@route_liveness = '/_liveness'
-      @@route_readiness = '/_readiness'
-      @@route_metrics = '/_metrics'
-      @@response_format = 'prometheus'
+      @@enable_rack_on_sidekiq = [true, 'true'].include? ENV['KUBERNETES_HEALTH_ENABLE_RACK_ON_SIDEKIQ']
+      @@route_liveness = ENV['KUBERNETES_HEALTH_LIVENESS_ROUTE']  || '/_liveness'
+      @@route_readiness = ENV['KUBERNETES_HEALTH_READINESS_ROUTE'] || '/_readiness'
+      @@route_metrics = ENV['KUBERNETES_HEALTH_METRICS_ROUTE'] || '/_metrics'
+      @@response_format = ENV['KUBERNETES_HEALTH_RESPONSE_FORMAT'] || 'prometheus'
 
       @@request_log_callback = lambda { |req, http_code, content|
-        Rails.logger.debug "Kubernetes Health: Rack on Migrate - Request: Path: #{req.path_info} / Params: #{req.params} /  HTTP Code: #{http_code}\n#{content}"  rescue nil
+        Rails.logger.debug "Kubernetes Health - Request: Path: #{req.path_info} / Params: #{req.params} /  HTTP Code: #{http_code}\n#{content}"  rescue nil
       }
 
       @@lock_or_wait = lambda { ActiveRecord::Base.connection.execute 'select pg_advisory_lock(123456789123456789);' }
@@ -55,6 +56,14 @@ module Kubernetes
 
       def self.enable_rack_on_migrate=(value)
         @@enable_rack_on_migrate = value
+      end
+
+      def self.enable_rack_on_sidekiq
+        @@enable_rack_on_sidekiq
+      end
+
+      def self.enable_rack_on_sidekiq=(value)
+        @@enable_rack_on_sidekiq = value
       end
 
       def self.route_metrics

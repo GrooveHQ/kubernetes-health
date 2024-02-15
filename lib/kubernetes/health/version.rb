@@ -1,5 +1,5 @@
 module Kubernetes
   module Health
-    VERSION = "3.4.1"
+    VERSION = '3.10.0'.freeze
   end
 end
