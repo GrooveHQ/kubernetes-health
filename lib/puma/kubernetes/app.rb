@@ -61,6 +61,13 @@ module Puma
       end
 
       def include_usage(stats)
+        if stats.is_a?(String)
+          # puma <= 4.
+          stats = JSON.parse(stats)
+        else
+          # Puma >=5 uses symbol.
+          stats = JSON.parse(stats.to_json)
+        end
         stats['usage'] = (1 - stats['pool_capacity'].to_f / stats['max_threads']).round(2)
         include_stats_hook(stats)
       end
