@@ -24,12 +24,12 @@ module Puma
       end
 
       def register_default_kubernetes
-        registry.gauge(:puma_backlog, docstring: 'Number of established but unaccepted connections in the backlog', index: 0)
-        registry.gauge(:puma_running, docstring: 'Number of running worker threads', index: 0)
-        registry.gauge(:puma_pool_capacity, docstring: 'Number of allocatable worker threads', index: 0)
-        registry.gauge(:puma_max_threads, docstring: 'Maximum number of worker threads', index: 0)
+        registry.gauge(:puma_backlog, docstring: 'Number of established but unaccepted connections in the backlog')
+        registry.gauge(:puma_running, docstring: 'Number of running worker threads')
+        registry.gauge(:puma_pool_capacity, docstring: 'Number of allocatable worker threads')
+        registry.gauge(:puma_max_threads, docstring: 'Maximum number of worker threads')
         registry.gauge(:puma_workers, docstring: 'Number of configured workers').set({}, 1)
-        registry.gauge(:puma_usage, docstring: 'Result of (1 - puma_pool_capacity/puma_max_threads)', index: 0)
+        registry.gauge(:puma_usage, docstring: 'Result of (1 - puma_pool_capacity/puma_max_threads)')
       end
 
       def registry
