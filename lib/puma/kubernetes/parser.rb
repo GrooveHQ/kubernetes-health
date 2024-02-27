@@ -19,8 +19,8 @@ module Puma
       private
 
       def register_clustered_kubernetes
-        registry.gauge(:puma_booted_workers, docstring: 'Number of booted workers').set({}, 1)
-        registry.gauge(:puma_old_workers, docstring: 'Number of old workers').set({}, 0)
+        registry.gauge(:puma_booted_workers, docstring: 'Number of booted workers').set(1)
+        registry.gauge(:puma_old_workers, docstring: 'Number of old workers').set(0)
       end
 
       def register_default_kubernetes
@@ -28,7 +28,7 @@ module Puma
         registry.gauge(:puma_running, docstring: 'Number of running worker threads')
         registry.gauge(:puma_pool_capacity, docstring: 'Number of allocatable worker threads')
         registry.gauge(:puma_max_threads, docstring: 'Maximum number of worker threads')
-        registry.gauge(:puma_workers, docstring: 'Number of configured workers').set({}, 1)
+        registry.gauge(:puma_workers, docstring: 'Number of configured workers').set(1)
         registry.gauge(:puma_usage, docstring: 'Result of (1 - puma_pool_capacity/puma_max_threads)')
       end
 
@@ -39,7 +39,7 @@ module Puma
       def update_metric(key, value, labels)
         return if registry.get("puma_#{key}").nil?
 
-        registry.get("puma_#{key}").set(labels, value)
+        registry.get("puma_#{key}").set(value, labels)
       end
     end
   end
